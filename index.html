@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<style>
+		td,
+		th {
+			border: 1px solid lightgray;
+			padding: 10px;
+		}
+		table {
+			border-collapse: collapse;
+		}
+		.block {
+			display: block;
+		}
+		.mb-1 {
+			margin-bottom: 1rem;
+		}
+		.btn-primary {
+			padding: 0.5rem 1.5rem;
+			background-color: slateblue;
+			color: #fff;
+			border-radius: 0.2rem;
+			border: none;
+		}
+		.btn-danger {
+			padding: 0.5rem 1.5rem;
+			background-color: crimson;
+			color: #fff;
+			border-radius: 0.2rem;
+			border: none;
+			text-decoration: none;
+		}
+		.none {
+			display: none;
+		}
+	</style>
+	<body>
+		<div id="app">
+			<table></table>
+		</div>
+		<h1>Add product</h1>
+		<form action="" id="form-add">
+			<label for="">Name</label>
+			<select name="" id="">
+				<option value="">--Select--</option>
+				<option value=""></option>
+			</select>
+			<input type="text" id="form-add__name" class="block mb-1" />
+			<label for="">Price</label>
+			<input type="number" id="form-add__price" class="block mb-1" />
+			<label for="">Stock</label>
+			<input type="number" id="form-add__stock" class="block mb-1" />
+			<button type="submit" class="btn-primary">Add</button>
+		</form>
+		<h1>Edit product</h1>
+		<form action="" id="form-edit" class="none">
+			<label for="">Name</label>
+			<input type="text" id="form-edit__name" class="block mb-1" />
+			<label for="">Price</label>
+			<input type="number" id="form-edit__price" class="block mb-1" />
+			<label for="">Stock</label>
+			<input type="number" id="form-edit__stock" class="block mb-1" />
+			<button type="submit" class="btn-primary">Edit</button>
+		</form>
+		<script>
+			// render product
+			async function renderProduct() {
+				const productList = await (await fetch("http://localhost:3000/api/product")).json();
+				console.log(productList);
+				const table = document.querySelector("table");
+				const thead = /*html*/ `<tr>
+											<th>ID</th>
+											<th>Category</th>
+											<th>Product's name</th>
+											<th>Price</th>
+											<th>Stock</th>
+											<th>-</th>
+										</tr>`;
+				const output = productList
+					.map(
+						(item) => /*html*/ `
+														<tr>
+															<td>${item._id}</td>
+															<td>${item.category}</td>
+															<td>${item.name}</td>
+															<td>${item.price}</td>
+															<td>${item.stock}</td>
+															<td>
+																<button onclick="handleEditProduct('${item._id}')">Edit</button>
+																</td>
+														</tr>`,
+					)
+					.join("");
+				table.innerHTML = thead + output;
+			}
+			renderProduct();
+
+			// add product
+			const formAdd = document.querySelector("#form-add");
+			const formEdit = document.querySelector("#form-edit");
+			formAdd.onsubmit = async (event) => {
+				event.preventDefault();
+				const formData = {
+					name: formAdd.querySelector("#form-add__name").value,
+					price: formAdd.querySelector("#form-add__price").value,
+					stock: formAdd.querySelector("#form-add__stock").value,
+				};
+				const option = {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(formData),
+				};
+				const res = await fetch("http://localhost:3000/product", option);
+				await renderProduct();
+				return res.json();
+			};
+			// edit product
+			const handleEditProduct = (id) => {
+				formEdit.classList.remove("none");
+				console.log(id);
+				formEdit.onsubmit = async (event) => {
+					event.preventDefault();
+					const formData = {
+						_id: id,
+						name: formEdit.querySelector("#form-edit__name").value,
+						price: formEdit.querySelector("#form-edit__price").value,
+						stock: formEdit.querySelector("#form-edit__stock").value,
+					};
+					const option = {
+						method: "PATCH",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(formData),
+					};
+					const res = await fetch("http://localhost:3000/product/" + id, option);
+					await renderProduct();
+					return res.json();
+				};
+			};
+			// delete product
+		</script>
+	</body>
+</html>
