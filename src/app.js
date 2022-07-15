@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import productRouter from "./routes/product";
 import cateRouter from "./routes/category";
+import userRouter from "./routes/user";
 const app = express();
 
 // using middleware
@@ -12,6 +13,7 @@ app.use(cors()); // public api for client access
 // using created router
 app.use("/api", productRouter);
 app.use("/api", cateRouter);
+app.use("/api", userRouter);
 // connect to database
 mongoose.connect("mongodb://localhost:27017/myapp1", () => {
 	console.log("Connected to database!");

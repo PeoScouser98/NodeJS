@@ -1,6 +1,7 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const cateSchema = mongoose.Schema({
+	_id: Schema.Types.ObjectId,
 	name: {
 		type: String,
 	},

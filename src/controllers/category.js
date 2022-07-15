@@ -16,10 +16,12 @@ export const selectOne = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const category = await Category.findOne({ _id: id }).exec();
-		const product = await Product.find({ category: category }).populate("category");
+		console.log(category);
+		const products = await Product.find().populate("category").select("-category").exec();
+		console.log(products);
 		res.json({
 			category: category,
-			product: product,
+			products: products,
 		});
 	} catch (error) {
 		res.status(400).json({

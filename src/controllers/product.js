@@ -1,5 +1,4 @@
 import Product from "../models/product";
-import Category from "../models/category";
 //  select all documents
 export const selectAll = async (req, res) => {
 	try {
